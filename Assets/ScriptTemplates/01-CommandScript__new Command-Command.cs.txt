@@ -1,0 +1,16 @@
+using UnityEngine;
+
+public class #SCRIPTNAME# : Command
+{
+ 
+    public #SCRIPTNAME#()
+    {
+    #NOTRIM#
+    }
+    
+    public override void Execute()
+    {
+        base.Execute();
+    }
+
+}
