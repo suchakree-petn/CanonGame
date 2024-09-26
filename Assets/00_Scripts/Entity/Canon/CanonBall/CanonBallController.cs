@@ -12,12 +12,6 @@ public class CanonBallController : MonoBehaviour
 
     [FoldoutGroup("Canon Ball Config", true)]
     public bool IsDestroy = false;
-    [FoldoutGroup("Canon Ball Config", true)]
-    public bool IsInit = false;
-
-
-    [FoldoutGroup("Canon Ball Config/Physic", true)]
-    public float CanonBallGravityMultiplier = 10;
 
     [FoldoutGroup("Canon Ball Config/Physic", true)]
     public LayerMask CollisionMask;
@@ -48,10 +42,12 @@ public class CanonBallController : MonoBehaviour
 
     [FoldoutGroup("Reference", true), Required]
     [SerializeField] protected Rigidbody _rigidbody;
+    public Rigidbody Rigidbody => _rigidbody;
 
     [FoldoutGroup("Reference", true), Required]
-    [SerializeField] protected Renderer meshRenderer;
-    protected Material _material;
+    [SerializeField] protected List<Renderer> meshRenderers = new();
+    protected List<Material> _materials = new();
+    protected Material materials;
 
     [FoldoutGroup("Reference", true)]
     [SerializeField] protected List<ParticleSystem> destroyParticle = new();
@@ -62,12 +58,23 @@ public class CanonBallController : MonoBehaviour
     [FoldoutGroup("Reference", true), Required]
     [SerializeField] protected Collider collisionCollider;
 
+    [FoldoutGroup("Reference", true), Required]
+    [SerializeField] protected ParticleSystem smokeTrail;
+    public ParticleSystem SmokeTrail => smokeTrail;
+
 
 
     protected virtual void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _material = meshRenderer.material;
+
+        _materials.Clear();
+        foreach (Renderer renderer in meshRenderers)
+        {
+            _materials.Add(renderer.material);
+        }
+
+        materials = _materials[0];
     }
 
     protected virtual void Start()
@@ -80,12 +87,11 @@ public class CanonBallController : MonoBehaviour
         canonBallModel.DOLocalRotate(new(360, 0, 0), 1 / rotateSpeed, RotateMode.FastBeyond360)
             .SetLoops(-1, LoopType.Restart)
             .SetEase(Ease.Linear);
-        IsInit = true;
     }
 
     void FixedUpdate()
     {
-        _rigidbody.AddForce(CanonBallGravityMultiplier * Vector3.down, ForceMode.Force);
+        _rigidbody.AddForce(CanonBallData.kGravityMultiplier * Vector3.down, ForceMode.Force);
 
     }
 
@@ -129,7 +135,13 @@ public class CanonBallController : MonoBehaviour
                 particle.Play();
             }
         });
-        sequence.Append(_material.DOFloat(1, "_Dissolve", dissolveDuration));
+
+        foreach (var material in _materials)
+        {
+            sequence.AppendCallback(() => material.DOFloat(1, "_Dissolve", dissolveDuration));
+
+        }
+        sequence.AppendInterval(dissolveDuration);
 
         sequence.Play();
 

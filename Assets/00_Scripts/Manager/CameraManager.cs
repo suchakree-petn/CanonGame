@@ -39,10 +39,12 @@ public class CameraManager : Singleton<CameraManager>
 
     private void Start()
     {
+
     }
 
     private void Update()
     {
+
         if (IsFollowCamActive)
         {
 
@@ -52,6 +54,9 @@ public class CameraManager : Singleton<CameraManager>
                 if (distance <= distanceDetachFollowCam)
                 {
                     FollowCam.Follow = null;
+                    Vector3 newPos = new(canonBallDropPoint.x, canonBallDropPoint.y + detachOffset_Y, canonBallDropPoint.z - 10);
+                    FollowCam.transform.DOMove(newPos, 0.5f).SetUpdate(UpdateType.Late);
+
                 }
             }
             else
@@ -101,7 +106,10 @@ public class CameraManager : Singleton<CameraManager>
             Sequence sequence = DOTween.Sequence();
             sequence.AppendInterval(0.1f).OnComplete(() =>
             {
-                ActiveCamera(CameraType.FollowCam);
+                if (canonBall.Rigidbody.velocity.magnitude > 1)
+                {
+                    ActiveCamera(CameraType.FollowCam);
+                }
             });
         }
     }
@@ -111,11 +119,8 @@ public class CameraManager : Singleton<CameraManager>
         FollowCam.Follow = null;
         FollowCam.LookAt = null;
 
-        Vector3 newPos = new(canonBallDropPoint.x, canonBallDropPoint.y + detachOffset_Y, canonBallDropPoint.z - 10);
 
         followCamSequence = DOTween.Sequence();
-
-        FollowCam.transform.DOMove(newPos, 0.5f).SetUpdate(UpdateType.Late);
         followCamSequence.AppendInterval(delayAfterDetach);
         followCamSequence.AppendCallback(() =>
         {

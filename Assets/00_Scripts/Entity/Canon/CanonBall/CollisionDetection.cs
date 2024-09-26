@@ -15,12 +15,10 @@ public class CollisionDetection : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (!canonBallController.IsInit) return;
-
         if ((canonBallController.CollisionMask.value & (1 << other.gameObject.layer)) != 0)
         {
             _rigidbody.drag = 10;
-
+            canonBallController.SmokeTrail.Stop();
             canonBallController.DestroyCanonBall();
         }
     }

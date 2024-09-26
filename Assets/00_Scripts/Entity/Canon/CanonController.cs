@@ -21,10 +21,6 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     [FoldoutGroup("Canon Config", true), SerializeField] bool isReadyToFire;
     bool IsReadyToFire => isReadyToFire;
 
-
-    [FoldoutGroup("Canon Ball Config", true), SerializeField]
-    float canonBallSpeed = 1;
-
     public Vector3 CanonBallDropPoint => Projection.CanonBallDropPoint;
 
     [FoldoutGroup("Reference"), Required, SerializeField] Transform canonRotaterTransform;
@@ -33,6 +29,9 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     public Transform FirePointTransform => firePointTransform;
     [FoldoutGroup("Reference"), Required] public Projection Projection;
     [FoldoutGroup("Reference"), Required] public PlayerHealth PlayerHealth;
+    [FoldoutGroup("Reference"), Required, SerializeField] ParticleSystem onFireExplosion;
+    [FoldoutGroup("Reference"), Required, SerializeField] ParticleSystem onFireSmoke;
+
 
 
     protected override void InitAfterAwake()
@@ -48,9 +47,11 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         CameraManager.Instance.ActiveCamera(CameraType.MainCam, 100);
 
         OnMoving += SimulateProjection;
+        OnFireCanon += (canonball) => SimulateProjection();
 
 
         GameManager.Instance.OnStartPlayerTurn += Projection.ShowProjectionLine;
+        GameManager.Instance.OnStartPlayerTurn += SimulateProjection;
         GameManager.Instance.OnStartEnemyTurn += Projection.HideProjectionLine;
 
 
@@ -130,12 +131,11 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         CanonBallData ghostCanonBall = PlayerManager.Instance.PeekCanonBall();
         if (ghostCanonBall)
         {
-            Projection.ShowProjectionLine();
-            Transform canonBall = ghostCanonBall.CanonBall_prf;
+            // Projection.ShowProjectionLine();
             Projection.DrawProjection(
                 firePointTransform.position,
-                firePointTransform.forward * canonBallSpeed,
-                canonBall.GetComponent<CanonBallController>().CanonBallGravityMultiplier);
+                firePointTransform.forward * ghostCanonBall.CanonBallSpeed,
+                CanonBallData.kGravityMultiplier);
         }
         else
         {
@@ -152,30 +152,37 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
 
         Projection.HideProjectionLine();
 
+        CameraManager cameraManager = CameraManager.Instance;
         Transform canonballTransform = Instantiate(currentCanonBall.CanonBall_prf, firePointTransform.position, Quaternion.identity);
         CanonBallController canonBall = canonballTransform.GetComponent<CanonBallController>();
         canonballTransform.gameObject.SetActive(false);
 
-        bool isBirdEyeViewActive = CameraManager.Instance.IsBirdEyeViewCamActive;
+        bool isBirdEyeViewActive = cameraManager.IsBirdEyeViewCamActive;
 
         if (isBirdEyeViewActive)
         {
-            CameraManager.Instance.DeactiveCamera(CameraType.BirdEyeView);
+
+            cameraManager.DeactiveCamera(CameraType.BirdEyeView);
+            cameraManager.OnFinishFollowCamera += ActiveBirdEyeViewCam;
+
         }
         Sequence sequence = DOTween.Sequence();
         sequence.AppendInterval(0.5f);
-        sequence.Append(PlayerUIManager.Instance.ShakeCameraOnFireCanon().SetEase(Ease.InQuad));
+        // sequence.Append(PlayerUIManager.Instance.ShakeCameraOnFireCanon().SetEase(Ease.InQuad));
+        sequence.AppendCallback(() =>
+        {
+            onFireExplosion.Play();
+            onFireSmoke.Play();
+            PlayerUIManager.Instance.ShakeCameraOnFireCanon().SetEase(Ease.InQuad);
+        });
         sequence.OnComplete(() =>
         {
-            if (isBirdEyeViewActive)
-            {
-                CameraManager.Instance.ActiveCamera(CameraType.BirdEyeView, int.MaxValue - 1);
-            }
+
 
             canonballTransform.gameObject.SetActive(true);
 
             Rigidbody canonRb = canonballTransform.GetComponent<Rigidbody>();
-            canonRb.AddForce(firePointTransform.forward * canonBallSpeed, ForceMode.Impulse);
+            canonRb.AddForce(firePointTransform.forward * currentCanonBall.CanonBallSpeed, ForceMode.Impulse);
             OnFireCanon?.Invoke(canonBall);
 
 
@@ -186,6 +193,11 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
 
     }
 
+    void ActiveBirdEyeViewCam()
+    {
+        CameraManager.Instance.ActiveCamera(CameraType.BirdEyeView, int.MaxValue - 1);
+        CameraManager.Instance.OnFinishFollowCamera -= ActiveBirdEyeViewCam;
+    }
     void TurnLeft()
     {
         currentTurn -= Time.deltaTime * turnSpeed;

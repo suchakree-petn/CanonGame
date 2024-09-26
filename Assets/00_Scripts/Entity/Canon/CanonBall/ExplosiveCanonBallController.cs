@@ -37,8 +37,8 @@ public class ExplosiveCanonBallController : CanonBallController
 
         explosionSequence = DOTween.Sequence();
         explosionSequence.AppendInterval(delayExplode);
-        explosionSequence.Append(_material.DOFloat(5, "_Power", 0.2f));
-        explosionSequence.Append(_material.DOFloat(0, "_Power", chargeExplode));
+        explosionSequence.Append(materials.DOFloat(5, "_Power", 0.2f));
+        explosionSequence.Append(materials.DOFloat(0, "_Power", chargeExplode));
         explosionSequence.AppendCallback(() =>
         {
             canonBallModel.gameObject.SetActive(false);
@@ -51,6 +51,7 @@ public class ExplosiveCanonBallController : CanonBallController
                 if (_damageable != null)
                 {
                     _damageable.TakeDamage(CanonBallData.ExplosionDamage);
+                    KnockBack(hit.rigidbody);
                     IsDestroy = true;
                     explosionSequence.Kill();
                 }
@@ -67,12 +68,12 @@ public class ExplosiveCanonBallController : CanonBallController
     {
         base.Init();
 
-        _material.SetFloat("_Power", 5);
+        materials.SetFloat("_Power", 5);
 
         Sequence sequence = DOTween.Sequence();
 
-        sequence.Append(_material.DOFloat(2, "_Power", flickeringDuration));
-        sequence.Append(_material.DOFloat(5, "_Power", flickeringDuration));
+        sequence.Append(materials.DOFloat(2, "_Power", flickeringDuration));
+        sequence.Append(materials.DOFloat(5, "_Power", flickeringDuration));
 
         sequence.SetLoops(-1);
 
@@ -81,9 +82,9 @@ public class ExplosiveCanonBallController : CanonBallController
 
     public override void DealDamage(IDamageable damageable)
     {
-        if(IsDestroy) return;
+        if (IsDestroy) return;
 
-        _material.DOKill(true);
+        materials.DOKill(true);
 
 
         explosionSequence.Play();
@@ -96,6 +97,12 @@ public class ExplosiveCanonBallController : CanonBallController
         canonBallModel.DOKill();
 
         Destroy(gameObject, explosionSequence.Duration());
+    }
+
+    void KnockBack(Rigidbody target)
+    {
+        Vector3 dir = (target.position - transform.position).normalized;
+        target.AddForce(dir * CanonBallData.ExplosionKnockBack, ForceMode.Impulse);
     }
 
     protected override void OnDrawGizmos()

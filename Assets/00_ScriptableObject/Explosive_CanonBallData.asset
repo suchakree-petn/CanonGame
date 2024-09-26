@@ -23,8 +23,9 @@ MonoBehaviour:
     SerializationNodes: []
   CanonBallType: 1
   Damage: 80
+  CanonBallSpeed: 60
   CanonBall_prf: {fileID: 874674810653859712, guid: afffe2fc1684f0a44abb167c8ce17a05,
     type: 3}
   ExplosionRange: 5
-  ExplosionKnockBack: 20
-  ExplosionDamage: 10
+  ExplosionKnockBack: 80
+  ExplosionDamage: 70

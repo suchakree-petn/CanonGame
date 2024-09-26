@@ -217,6 +217,12 @@ SphereCollider:
     type: 3}
   m_PrefabInstance: {fileID: 1728452906540899628}
   m_PrefabAsset: {fileID: 0}
+--- !u!198 &8255211187630339586 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7308449480126622510, guid: 8b5fc32ffbd449f4e8a68e46a5c03032,
+    type: 3}
+  m_PrefabInstance: {fileID: 1728452906540899628}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8916129624047278458 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7800452693946811478, guid: 8b5fc32ffbd449f4e8a68e46a5c03032,
@@ -237,8 +243,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CanonBallData: {fileID: 11400000, guid: d14b4f7b671c4f3419e54953591f9d63, type: 2}
   IsDestroy: 0
-  IsInit: 0
-  CanonBallGravityMultiplier: 75
   CollisionMask:
     serializedVersion: 2
     m_Bits: 16448
@@ -252,13 +256,15 @@ MonoBehaviour:
   dissolveDuration: 3
   canonBallModel: {fileID: 2966393792310865605}
   _rigidbody: {fileID: 1997611615864613354}
-  meshRenderer: {fileID: 1983525264013163930}
+  meshRenderers:
+  - {fileID: 1983525264013163930}
   destroyParticle: []
   damageCollider: {fileID: 3083281333635024475}
   collisionCollider: {fileID: 5355835629642777510}
+  smokeTrail: {fileID: 8255211187630339586}
   flickeringDuration: 0.2
-  delayExplode: 1
-  chargeExplode: 2
+  delayExplode: 0.5
+  chargeExplode: 1.5
   explosion_prf: {fileID: 4388947112716342, guid: e1b08032bec16ba4eb1ae23cbd572664,
     type: 3}
 --- !u!1001 &2004811454485458852

@@ -29,7 +29,6 @@ public class Projection : MonoBehaviour
 
     public void DrawProjection(Vector3 startPosition, Vector3 startVelocity, float canonBallGravityMultiplier)
     {
-        lineRenderer.enabled = true;
         lineRenderer.positionCount = Mathf.CeilToInt(LinePoints / TimeBetweenPoints) + 1;
 
         int i = 0;
@@ -70,8 +69,6 @@ public class Projection : MonoBehaviour
     
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawSphere(CanonBallDropPoint, 3);
     }
 
 }

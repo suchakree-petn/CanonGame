@@ -23,7 +23,8 @@ public class EnemyController : MonoBehaviour, IDamageable
     [FoldoutGroup("AI")][SerializeField] protected NavMeshPath path;
 
     [FoldoutGroup("Reference")][InlineEditor, SerializeField] protected EnemyHealth enemyHealth;
-    [FoldoutGroup("Reference")][InlineEditor, SerializeField] protected Rigidbody enemyRb;
+    Rigidbody _enemyRb;
+    public Rigidbody Rigidbody => _enemyRb;
     [FoldoutGroup("Reference")][InlineEditor, SerializeField] protected Animator animator;
     [FoldoutGroup("Reference")][InlineEditor, SerializeField] protected LegsAnimator legsAnimator;
 
@@ -39,6 +40,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         dissolveMaterial = mesh.material;
         outlineController = GetComponent<OutlineController>();
+        _enemyRb = GetComponent<Rigidbody>();
     }
 
     protected virtual void Start()

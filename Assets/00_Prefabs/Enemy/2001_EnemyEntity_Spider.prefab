@@ -168,7 +168,7 @@ PrefabInstance:
     - target: {fileID: 6618734251774362899, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_Mass
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6618734251774362899, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
@@ -381,7 +381,6 @@ MonoBehaviour:
   IsStun: 0
   agent: {fileID: 2156389711653684782}
   enemyHealth: {fileID: 1600950719771073299}
-  enemyRb: {fileID: 6679797105037270863}
   animator: {fileID: 5136453615569413610}
   legsAnimator: {fileID: 6412386249001058262}
   hitBox: {fileID: 7890215319194994415}
@@ -461,12 +460,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &6679797105037270863 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 6618734251774362899, guid: 277cc6e49133b334d9f455143a04b122,
-    type: 3}
-  m_PrefabInstance: {fileID: 533992869226420828}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &7223219313078455080 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7158216652408836468, guid: 277cc6e49133b334d9f455143a04b122,
