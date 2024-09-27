@@ -54,6 +54,8 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         Target = CanonController.Instance.transform;
 
+        CameraManager.Instance.TargetGroup.AddMember(transform, 1, 0);
+
     }
 
 

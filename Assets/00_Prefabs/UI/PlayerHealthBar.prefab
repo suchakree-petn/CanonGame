@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 67.79999}
-  m_SizeDelta: {x: 575, y: 105.46}
+  m_SizeDelta: {x: 575, y: 105.45996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2638100619812063728
 MonoBehaviour:
@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faa298580842e1e409be8d020f7ab27b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayAnimateDecrease: 1
+  delayAnimateDecrease: 0.5
   durationAnimateDecrease: 1
   hpFill: {fileID: 833217912427571702}
   hpFillDecrease: {fileID: 1510508957910496814}

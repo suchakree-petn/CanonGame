@@ -54,6 +54,7 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         GameManager.Instance.OnStartPlayerTurn += SimulateProjection;
         GameManager.Instance.OnStartEnemyTurn += Projection.HideProjectionLine;
 
+        CameraManager.Instance.TargetGroup.AddMember(transform, 1, 0);
 
     }
 

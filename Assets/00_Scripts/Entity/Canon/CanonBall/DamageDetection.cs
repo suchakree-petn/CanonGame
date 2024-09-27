@@ -24,7 +24,8 @@ public class DamageDetection : MonoBehaviour
 
         foreach (var hit in raycastHit)
         {
-            if (hit.transform.root.TryGetComponent(out IDamageable damageable))
+            IDamageable damageable = hit.transform.GetComponentInParent<IDamageable>();
+            if (damageable != null)
             {
                 canonBallController.DealDamage(damageable);
             }

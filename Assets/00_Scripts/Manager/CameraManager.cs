@@ -22,6 +22,9 @@ public class CameraManager : Singleton<CameraManager>
 
     [FoldoutGroup("Reference"), Required]
     public CinemachineVirtualCamera MainCam, BirdEyeView, FollowCam, EnemyCloseUpCam;
+    [FoldoutGroup("Reference"), Required]
+    public CinemachineTargetGroup TargetGroup;
+    
     CinemachineBrain cinemachineBrain;
 
     Sequence followCamSequence;
