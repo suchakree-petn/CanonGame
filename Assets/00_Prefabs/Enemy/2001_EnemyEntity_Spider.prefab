@@ -183,17 +183,17 @@ PrefabInstance:
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.8
+      value: 24.74744
       objectReference: {fileID: 0}
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.00000047683716
+      value: -2.7346153
       objectReference: {fileID: 0}
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.3
+      value: -59.117607
       objectReference: {fileID: 0}
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
@@ -325,10 +325,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2156389711653684782}
-    - targetCorrespondingSourceObject: {fileID: 3991757503176248713, guid: 277cc6e49133b334d9f455143a04b122,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6214275691459209323}
     - targetCorrespondingSourceObject: {fileID: 9046847541456957477, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       insertIndex: -1
@@ -388,12 +384,6 @@ MonoBehaviour:
   mesh: {fileID: 7717285845042949063}
   mesh_parent: {fileID: 309631443976711336}
   dissolveMaterial: {fileID: 0}
-  attackPower: 0
-  attackPower_Multiplier: 0
-  attackRange: 0
-  attackTimeInterval: 0
-  isReadyToAttack: 0
-  isFinishAttack: 0
   attackPointTransform: {fileID: 2497145869891999911}
   attackClip: {fileID: 7400000, guid: 7c5331f86c7aae342b9784bcb841acf3, type: 2}
 --- !u!95 &5136453615569413610
@@ -431,7 +421,7 @@ NavMeshAgent:
   m_Acceleration: 10
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 5
+  m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -439,27 +429,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!135 &6214275691459209323
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3462298222666913749}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!224 &7223219313078455080 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7158216652408836468, guid: 277cc6e49133b334d9f455143a04b122,
@@ -2155,7 +2124,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 2830256366619543969}
   ScaleReferenceMode: 3
-  finalScaleReference: 1.7290909
+  finalScaleReference: 1.7290907
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -2274,7 +2243,7 @@ MonoBehaviour:
   outlineMode: 3
   outlineColor: {r: 1, g: 0, b: 0, a: 1}
   outlineWidth: 5.5
-  precomputeOutline: 1
+  precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
 --- !u!4 &6775549454805589401 stripped

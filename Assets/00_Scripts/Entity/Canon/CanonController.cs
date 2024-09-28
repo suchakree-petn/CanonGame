@@ -202,15 +202,15 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     void TurnLeft()
     {
         currentTurn -= Time.deltaTime * turnSpeed;
-        currentTurn = Mathf.Clamp(currentTurn, minTurn, maxTurn);
-        canonRotaterTransform.rotation = Quaternion.Euler(0, currentTurn, 0);
+        // currentTurn = Mathf.Clamp(currentTurn, minTurn, maxTurn);
+        canonRotaterTransform.localRotation = Quaternion.Euler(0, currentTurn, 0);
     }
 
     void TurnRight()
     {
         currentTurn += Time.deltaTime * turnSpeed;
-        currentTurn = Mathf.Clamp(currentTurn, minTurn, maxTurn);
-        canonRotaterTransform.rotation = Quaternion.Euler(0, currentTurn, 0);
+        // currentTurn = Mathf.Clamp(currentTurn, minTurn, maxTurn);
+        canonRotaterTransform.localRotation = Quaternion.Euler(0, currentTurn, 0);
     }
 
     void TiltUp()

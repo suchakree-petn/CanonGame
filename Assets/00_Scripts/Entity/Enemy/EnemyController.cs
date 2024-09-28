@@ -47,7 +47,9 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         // OnEnemyDead_Local += () => enemyHealth.GetEnemyHealth_UI().gameObject.SetActive(false);
         OnEnemyDead_Local += () => collideHitBox.enabled = false;
+        OnEnemyDead_Local += () => CameraManager.Instance.TargetGroup.RemoveMember(transform);
         OnEnemyDead_Local += outlineController.HideOutline;
+        OnEnemyDead_Local += OnEnemyDead_Animation;
         OnEnemyHit_Local += OnEnemyHit_Shaking;
 
         outlineController.HideOutline();
@@ -55,6 +57,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         Target = CanonController.Instance.transform;
 
         CameraManager.Instance.TargetGroup.AddMember(transform, 1, 0);
+
 
     }
 
@@ -92,13 +95,13 @@ public class EnemyController : MonoBehaviour, IDamageable
     protected virtual void OnEnable()
     {
         GameManager.Instance.OnStartEnemyTurn += MoveToPlayer;
+        OnEnemyDead_Local += ()=> GameManager.Instance.OnStartEnemyTurn -= MoveToPlayer;
     }
     protected virtual void OnDisable()
     {
         if (GameManager.Instance)
         {
 
-            GameManager.Instance.OnStartEnemyTurn -= MoveToPlayer;
         }
 
     }
@@ -108,19 +111,25 @@ public class EnemyController : MonoBehaviour, IDamageable
         OnEnemyAttack_Local?.Invoke();
     }
 
-    public void OnEnemyDead_Dissolve()
+    private void OnEnemyDead_Animation()
     {
-        mesh.gameObject.layer = 0;
-        dissolveMaterial.DOFloat(1, "_Dissolve", 2).SetEase(Ease.OutSine);
+        legsAnimator.enabled = false;
+        animator.SetBool("IsDead", true);
+    }
+
+    private void OnEnemyDead_Dissolve()
+    {
+        dissolveMaterial.DOFloat(1, "_Dissolve", 2)
+            .SetEase(Ease.OutSine)
+            .OnComplete(() =>
+            {
+                Destroy(gameObject);
+            });
     }
 
 
     public virtual void OnEnemyHit_Shaking()
     {
-        // Sequence sequence = DOTween.Sequence();
-        // sequence.Append(mesh_parent.DOShakePosition(0.2f, strength: 0.5f, vibrato: 50));
-        // sequence.Play();
-
         LegsAnimator.PelvisImpulseSettings pelvisImpulseSettings = new(new(0, -1f, -1f), 0.2f, 0.1f);
         legsAnimator.User_AddImpulse(pelvisImpulseSettings);
     }
@@ -139,17 +148,29 @@ public class EnemyController : MonoBehaviour, IDamageable
         {
             enemyHealth.TakeDamage(damage);
             OnEnemyHit_Local?.Invoke();
+
+            if (enemyHealth.IsDead)
+            {
+                StopMoving();
+                hitBox.enabled = false;
+                OnEnemyDead_Local?.Invoke();
+                OnEnemyDead_Local = null;
+            }
         }
     }
 
 
     public virtual void MoveToPlayer()
     {
-        Command moveToPlayerCommand = new EnemyMoveToPlayerCommand(Target, agent, EnemyManager.Instance.MoveToPlayerDuration);
+        Command moveToPlayerCommand = new EnemyMoveToPlayerCommand(Target, agent, EnemyManager.Instance.MoveToPlayerDuration, StopMoveCondition);
         GameManager.Instance.AddCommand(moveToPlayerCommand);
     }
 
-
+    protected virtual bool StopMoveCondition()
+    {
+        // float distance = Vector3.Distance(Target.position, transform.position);
+        return agent.remainingDistance <= EnemyCharacterData.AttackRange;
+    }
 
     public void StopMoving()
     {
@@ -168,7 +189,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     public virtual bool CanAttack()
     {
         float distanceToPlayer = Vector3.Distance(Target.position, transform.position);
-        return distanceToPlayer <= EnemyCharacterData.AttackRange + agent.stoppingDistance;
+        return distanceToPlayer <= EnemyCharacterData.AttackRange + 5;
     }
 
     public IEnumerator DelayDestroy(float time)

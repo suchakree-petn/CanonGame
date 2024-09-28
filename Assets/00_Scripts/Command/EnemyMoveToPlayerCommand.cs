@@ -65,12 +65,14 @@ public class EnemyMoveToPlayerCommand : Command
     Transform playerTransform;
     NavMeshAgent agent;
     float duration;
+    Func<bool> stopCondition;
 
-    public EnemyMoveToPlayerCommand(Transform playerTransform, NavMeshAgent agent, float duration)
+    public EnemyMoveToPlayerCommand(Transform playerTransform, NavMeshAgent agent, float duration,Func<bool> stopCondition)
     {
         this.duration = duration;
         this.playerTransform = playerTransform;
         this.agent = agent;
+        this.stopCondition = stopCondition;
     }
 
     public override void Execute()
@@ -79,8 +81,10 @@ public class EnemyMoveToPlayerCommand : Command
 
         // Set the destination to the player's position
         agent.isStopped = false;
-        agent.SetDestination(playerTransform.position);
-
+        NavMeshPath path = new();
+        agent.CalculatePath(playerTransform.position,path);
+        agent.SetPath(path);
+        // agent.SetDestination(playerTransform.position);
         CameraManager.Instance.CloseUpEnemy(agent.transform);
 
         Sequence sequence = DOTween.Sequence();
@@ -88,14 +92,10 @@ public class EnemyMoveToPlayerCommand : Command
         sequence.AppendInterval(duration)
             .OnUpdate(() =>
             {
-                // Check if the agent has arrived at the destination
-                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+                if (stopCondition())
                 {
-                    if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
-                    {
-                        StopMove();
-                        sequence.Kill();
-                    }
+                    StopMove();
+                    sequence.Kill();
                 }
             })
             .OnComplete(() =>

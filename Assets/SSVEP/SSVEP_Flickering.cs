@@ -34,12 +34,6 @@ public class SSVEP_Flickering : MonoBehaviour
     private StreamOutlet outlet;
     private string[] sample = { "" };
 
-    // For calculate equally class trials
-    public int numberOfTrial = 10;
-    public int numberOfClass = 2;
-    private int[] randomNumbers;
-    // private int currentIndex = 0;
-
 
     private void Awake()
     {

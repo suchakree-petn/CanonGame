@@ -101,6 +101,7 @@ public class ExplosiveCanonBallController : CanonBallController
 
     void KnockBack(Rigidbody target)
     {
+        if(!target) return;
         Vector3 dir = (target.position - transform.position).normalized;
         target.AddForce(dir * CanonBallData.ExplosionKnockBack, ForceMode.Impulse);
     }

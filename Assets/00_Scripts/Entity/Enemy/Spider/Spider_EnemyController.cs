@@ -1,17 +1,10 @@
 using System.Collections;
+using DG.Tweening;
 using FIMSpace.FProceduralAnimation;
 using Sirenix.OdinInspector;
 using UnityEngine;
 public class Spider_EnemyController : EnemyController
 {
-
-    [SerializeField] private float attackPower;
-    [SerializeField] private float attackPower_Multiplier;
-    [SerializeField] private float attackRange;
-    [SerializeField] private float attackTimeInterval;
-    [SerializeField] private bool isReadyToAttack;
-    [SerializeField] private bool isFinishAttack;
-
 
     [FoldoutGroup("Spider Reference"), Required]
     [SerializeField] private Transform attackPointTransform;
@@ -23,6 +16,7 @@ public class Spider_EnemyController : EnemyController
         base.Start();
         // OnEnemyAttack_Local += NormalAttack;
         OnEnemyHit_Local += OnEnemyHit_HitAnimation;
+
 
     }
 
@@ -50,6 +44,7 @@ public class Spider_EnemyController : EnemyController
     {
         base.OnEnable();
         GameManager.Instance.OnStartEnemyTurn += AttackCommand;
+        OnEnemyDead_Local += ()=> GameManager.Instance.OnStartEnemyTurn -= AttackCommand;
     }
 
     protected override void OnDisable()
@@ -57,15 +52,25 @@ public class Spider_EnemyController : EnemyController
         base.OnDisable();
         if (GameManager.Instance)
         {
-            GameManager.Instance.OnStartEnemyTurn -= AttackCommand;
 
         }
 
     }
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(attackPointTransform.position, EnemyCharacterData.AttackRange + agent.stoppingDistance);
+    }
+
     private void NormalAttack()
     {
-        RaycastHit[] hits = Physics.SphereCastAll(attackPointTransform.position, attackRange, attackPointTransform.forward, attackRange, EnemyCharacterData.TargetLayer);
+        RaycastHit[] hits = Physics.SphereCastAll(
+            attackPointTransform.position,
+            EnemyCharacterData.AttackRange + agent.stoppingDistance,
+            attackPointTransform.forward,
+            EnemyCharacterData.AttackRange + agent.stoppingDistance,
+            EnemyCharacterData.TargetLayer);
+
         foreach (RaycastHit hit in hits)
         {
             if (hit.collider.transform.root.TryGetComponent(out IDamageable damageable) && hit.collider.isTrigger)
@@ -78,6 +83,7 @@ public class Spider_EnemyController : EnemyController
 
     private void PlayAttackAnimation()
     {
+        transform.DOLookAt(Target.position, 0.3f);
         animator.SetTrigger("Attack");
 
     }
@@ -87,6 +93,11 @@ public class Spider_EnemyController : EnemyController
     //     base.MoveToPlayer();
 
     // }
+
+    public override bool CanAttack()
+    {
+        return base.CanAttack();
+    }
 
     public void AttackCommand()
     {

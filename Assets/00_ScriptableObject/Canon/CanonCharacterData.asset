@@ -18,8 +18,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 16384
   MoveSpeed: 0
-  MoveSpeed_Instance: 0
-  Health: 100
-  Health_Instance: 0
+  Health: 400
   Attack: 0
-  Attack_Instance: 0
