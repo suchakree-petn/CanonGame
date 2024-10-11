@@ -414,7 +414,7 @@ public class Outline : MonoBehaviour
 
   public void RemoveOutline()
   {
-
+    #if UNITY_EDITOR
     if (!EditorApplication.isPlaying)
     {
       foreach (var renderer in renderers)
@@ -434,6 +434,7 @@ public class Outline : MonoBehaviour
         return;
       }
     }
+    #endif
 
     foreach (var renderer in renderers)
     {
@@ -449,11 +450,14 @@ public class Outline : MonoBehaviour
 
   public void CreateOutline()
   {
+    #if UNITY_EDITOR
     if (!EditorApplication.isPlaying)
     {
       UpdateOutlineInEditor();
       return;
     }
+    #endif
+
     foreach (var renderer in renderers)
     {
 

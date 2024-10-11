@@ -24,7 +24,7 @@ public class CameraManager : Singleton<CameraManager>
     public CinemachineVirtualCamera MainCam, BirdEyeView, FollowCam, EnemyCloseUpCam;
     [FoldoutGroup("Reference"), Required]
     public CinemachineTargetGroup TargetGroup;
-    
+
     CinemachineBrain cinemachineBrain;
 
     Sequence followCamSequence;
@@ -102,13 +102,18 @@ public class CameraManager : Singleton<CameraManager>
         if (!IsFollowCamActive)
         {
             canonBallDropPoint = CanonController.Instance.CanonBallDropPoint;
-            Transform firePoint = CanonController.Instance.transform;
-            FollowCam.transform.SetPositionAndRotation(firePoint.position, firePoint.rotation);
+            FollowCam.transform.SetPositionAndRotation(MainCam.transform.position, MainCam.transform.rotation);
             FollowCam.Follow = canonBall.transform;
             FollowCam.LookAt = canonBall.transform;
             Sequence sequence = DOTween.Sequence();
+            sequence.AppendCallback(() =>
+            {
+                Time.timeScale = 0.5f;
+            });
             sequence.AppendInterval(0.1f).OnComplete(() =>
             {
+                Time.timeScale = 1f;
+
                 if (canonBall.Rigidbody.velocity.magnitude > 1)
                 {
                     ActiveCamera(CameraType.FollowCam);

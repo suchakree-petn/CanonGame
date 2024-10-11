@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Cinemachine;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -22,6 +19,7 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     bool IsReadyToFire => isReadyToFire;
 
     public Vector3 CanonBallDropPoint => Projection.CanonBallDropPoint;
+    public EnemyController HitEnemy => Projection.HitEnemy;
 
     [FoldoutGroup("Reference"), Required, SerializeField] Transform canonRotaterTransform;
     [FoldoutGroup("Reference"), Required, SerializeField] Transform canonTiltTransform;
@@ -47,21 +45,28 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         CameraManager.Instance.ActiveCamera(CameraType.MainCam, 100);
 
         OnMoving += SimulateProjection;
+        CameraManager.Instance.OnFinishFollowCamera += LockToTarget;
         OnFireCanon += (canonball) => SimulateProjection();
 
 
+        GameManager.Instance.OnStartPlayerTurn += LockToTarget;
         GameManager.Instance.OnStartPlayerTurn += Projection.ShowProjectionLine;
         GameManager.Instance.OnStartPlayerTurn += SimulateProjection;
         GameManager.Instance.OnStartEnemyTurn += Projection.HideProjectionLine;
 
         CameraManager.Instance.TargetGroup.AddMember(transform, 1, 0);
 
+
+
     }
+
 
     private void Update()
     {
-
+        RotateTowardTarget();
     }
+
+
 
     private void FixedUpdate()
     {
@@ -127,22 +132,57 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     {
     }
 
+
+    private void RotateTowardTarget()
+    {
+        EnemyController enemyController = EnemyManager.Instance.ClosestAliveEnemy;
+        if (!enemyController) return;
+        Vector3 dir = (enemyController.transform.position - firePointTransform.position).normalized;
+        dir = Vector3.ProjectOnPlane(dir, Vector3.up);
+        canonRotaterTransform.forward = dir;
+        canonTiltTransform.localRotation = Quaternion.Euler(currentTilt, 0, 0);
+    }
+
     private void SimulateProjection()
     {
         CanonBallData ghostCanonBall = PlayerManager.Instance.PeekCanonBall();
         if (ghostCanonBall)
         {
-            // Projection.ShowProjectionLine();
             Projection.DrawProjection(
                 firePointTransform.position,
                 firePointTransform.forward * ghostCanonBall.CanonBallSpeed,
                 CanonBallData.kGravityMultiplier);
+
         }
         else
         {
             Projection.HideProjectionLine();
         }
     }
+
+    [Button]
+    private void LockToTarget()
+    {
+        for (currentTilt = maxTilt; currentTilt >= minTilt; currentTilt -= 0.3f)
+        {
+            canonTiltTransform.localRotation = Quaternion.Euler(currentTilt, 0, 0);
+            SimulateProjection();
+
+            bool isInside = HitEnemy;
+
+            if (isInside)
+            {
+                if (currentTilt > -45)
+                {
+                    currentTilt -= 3f;
+                    canonTiltTransform.localRotation = Quaternion.Euler(currentTilt, 0, 0);
+                }
+                Debug.Log("Inside");
+                break;
+            }
+        }
+    }
+
 
     private CanonBallController FireCanonBall()
     {
@@ -169,7 +209,6 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         }
         Sequence sequence = DOTween.Sequence();
         sequence.AppendInterval(0.5f);
-        // sequence.Append(PlayerUIManager.Instance.ShakeCameraOnFireCanon().SetEase(Ease.InQuad));
         sequence.AppendCallback(() =>
         {
             onFireExplosion.Play();

@@ -23,22 +23,7 @@ public class Spider_EnemyController : EnemyController
     protected override void Update()
     {
         base.Update();
-        // if (Vector3.Distance(transform.position, Target.position) > attackRange + 2 && isFinishAttack && CanMove)
-        // {
-        //     agent.isStopped = false;
-        //     animator.SetFloat("VelocityZ", Mathf.Lerp(animator.GetFloat("VelocityZ"), 1, Time.deltaTime * 5));
-        // }
-        // else
-        // {
-        //     agent.isStopped = true;
 
-        //     if (!CanMove) return;
-        //     // Attack
-        //     animator.SetFloat("VelocityZ", Mathf.Lerp(animator.GetFloat("VelocityZ"), 0, Time.deltaTime * 10));
-        //     if (!isReadyToAttack || IsStun) return;
-        //     animator.SetTrigger("Attack");
-
-        // }
     }
     protected override void OnEnable()
     {

@@ -34,7 +34,7 @@ public class OutlineController : MonoBehaviour
 
     private void OnValidate()
     {
-
+        #if UNITY_EDITOR
         if (!EditorApplication.isPlaying)
         {
             outlines = transform.GetComponentsInChildren<Outline>();
@@ -53,6 +53,7 @@ public class OutlineController : MonoBehaviour
             }
             return;
         }
+        #endif
 
 #if UNITY_EDITOR
         foreach (Outline outline in outlines)

@@ -91,7 +91,7 @@ public class CanonBallController : MonoBehaviour
 
     void FixedUpdate()
     {
-        _rigidbody.AddForce(CanonBallData.kGravityMultiplier * Vector3.down, ForceMode.Force);
+        // _rigidbody.AddForce(CanonBallData.kGravityMultiplier * Vector3.down, ForceMode.Force);
 
     }
 

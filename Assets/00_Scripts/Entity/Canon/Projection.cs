@@ -13,6 +13,7 @@ public class Projection : MonoBehaviour
     float TimeBetweenPoints = 0.1f;
 
     [FoldoutGroup("Config", true), ReadOnly] public Vector3 CanonBallDropPoint;
+    [FoldoutGroup("Config", true), ReadOnly] public EnemyController HitEnemy;
 
 
     [SerializeField] private LayerMask layerMask;
@@ -52,6 +53,7 @@ public class Projection : MonoBehaviour
                 lineRenderer.SetPosition(i, hit.point);
                 lineRenderer.positionCount = i + 1;
                 CanonBallDropPoint = hit.point;
+                HitEnemy = hit.transform.GetComponentInParent<EnemyController>();
                 return;
             }
         }
@@ -66,7 +68,7 @@ public class Projection : MonoBehaviour
     {
         lineRenderer.enabled = true;
     }
-    
+
     private void OnDrawGizmos()
     {
     }

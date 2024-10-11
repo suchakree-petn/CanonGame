@@ -29,6 +29,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     [FoldoutGroup("Reference")][InlineEditor, SerializeField] protected LegsAnimator legsAnimator;
 
     [FoldoutGroup("Collider")][InlineEditor, SerializeField] protected Collider hitBox;
+    public Collider HitBox => hitBox;
     [FoldoutGroup("Collider")][InlineEditor, SerializeField] protected Collider collideHitBox;
 
     [FoldoutGroup("Mesh & Material")][InlineEditor, SerializeField] protected Renderer mesh;
@@ -45,7 +46,9 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     protected virtual void Start()
     {
-        // OnEnemyDead_Local += () => enemyHealth.GetEnemyHealth_UI().gameObject.SetActive(false);
+        EnemyManager.Instance.AliveEnemy.Add(GetInstanceID(), this);
+
+        OnEnemyDead_Local += () => enemyHealth.GetEnemyHealth_UI().gameObject.SetActive(false);
         OnEnemyDead_Local += () => collideHitBox.enabled = false;
         OnEnemyDead_Local += () => CameraManager.Instance.TargetGroup.RemoveMember(transform);
         OnEnemyDead_Local += outlineController.HideOutline;
@@ -80,22 +83,13 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     protected virtual void LateUpdate()
     {
-        // Vector3 direction = agent.velocity.normalized;
-        // if (agent.isStopped)
-        // {
-        //     direction = (Target.position - transform.position).normalized;
-        // }
-        // else if (direction != Vector3.zero && CanMove)
-        // {
-        //     Vector3 forward = enemyRb.transform.forward;
-        //     enemyRb.transform.forward = new(forward.x, direction.y, forward.z);
-        // }
+
     }
 
     protected virtual void OnEnable()
     {
         GameManager.Instance.OnStartEnemyTurn += MoveToPlayer;
-        OnEnemyDead_Local += ()=> GameManager.Instance.OnStartEnemyTurn -= MoveToPlayer;
+        OnEnemyDead_Local += () => GameManager.Instance.OnStartEnemyTurn -= MoveToPlayer;
     }
     protected virtual void OnDisable()
     {
@@ -103,6 +97,12 @@ public class EnemyController : MonoBehaviour, IDamageable
         {
 
         }
+
+    }
+
+    private void OnDestroy()
+    {
+        EnemyManager.Instance.AliveEnemy.Remove(GetInstanceID());
 
     }
 
@@ -162,7 +162,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     public virtual void MoveToPlayer()
     {
-        Command moveToPlayerCommand = new EnemyMoveToPlayerCommand(Target, agent, EnemyManager.Instance.MoveToPlayerDuration, StopMoveCondition);
+        Command moveToPlayerCommand = new EnemyMoveToPlayerCommand(Target, agent, EnemyManager.Instance.MoveToPlayerDuration, StopMoveCondition, 0);
         GameManager.Instance.AddCommand(moveToPlayerCommand);
     }
 

@@ -6,7 +6,7 @@ public class CanonBallData : SerializedScriptableObject
 {
     public CanonBallType CanonBallType;
     public float Damage;
-    public const float kGravityMultiplier = 75;
+    public const float kGravityMultiplier = 9.8f;
     public float CanonBallSpeed = 80;
     public Transform CanonBall_prf;
 

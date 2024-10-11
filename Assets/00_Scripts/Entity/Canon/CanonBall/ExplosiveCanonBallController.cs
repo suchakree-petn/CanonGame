@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -21,8 +19,11 @@ public class ExplosiveCanonBallController : CanonBallController
     Transform explosion_prf;
 
     Sequence explosionSequence;
+    Sequence immedieatlyExplosionSequence;
 
     ParticleSystem explodeParticle;
+
+    bool _isExploded;
 
 
     protected override void Awake()
@@ -36,6 +37,10 @@ public class ExplosiveCanonBallController : CanonBallController
 
 
         explosionSequence = DOTween.Sequence();
+        explosionSequence.AppendCallback(() =>
+        {
+            _isExploded = true;
+        });
         explosionSequence.AppendInterval(delayExplode);
         explosionSequence.Append(materials.DOFloat(5, "_Power", 0.2f));
         explosionSequence.Append(materials.DOFloat(0, "_Power", chargeExplode));
@@ -62,6 +67,43 @@ public class ExplosiveCanonBallController : CanonBallController
         float explosionParticleDuration = explodeParticle.main.duration;
         explosionSequence.AppendInterval(explosionParticleDuration);
         explosionSequence.OnComplete(DestroyCanonBall);
+        explosionSequence.Pause();
+
+
+        immedieatlyExplosionSequence = DOTween.Sequence();
+        immedieatlyExplosionSequence.AppendCallback(() =>
+        {
+            _isExploded = true;
+            Rigidbody.velocity = Vector3.zero;
+            transform.up = Vector3.up;
+            Rigidbody.freezeRotation = true;
+        });
+        immedieatlyExplosionSequence.Append(materials.DOFloat(5, "_Power", 0f));
+        immedieatlyExplosionSequence.Append(materials.DOFloat(0, "_Power", 0.1f));
+        immedieatlyExplosionSequence.AppendCallback(() =>
+        {
+            canonBallModel.gameObject.SetActive(false);
+            Instantiate(explosion_prf, transform);
+
+            RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, CanonBallData.ExplosionRange, Vector3.up, CanonBallData.ExplosionRange, DamageMask);
+            foreach (var hit in raycastHits)
+            {
+                IDamageable _damageable = hit.transform.GetComponentInParent<IDamageable>();
+                if (_damageable != null)
+                {
+                    _damageable.TakeDamage(CanonBallData.ExplosionDamage);
+                    KnockBack(hit.rigidbody);
+                    IsDestroy = true;
+                    immedieatlyExplosionSequence.Kill();
+                }
+            }
+
+        });
+
+        float immedieatlyExplosionDuration = explodeParticle.main.duration;
+        immedieatlyExplosionSequence.AppendInterval(immedieatlyExplosionDuration);
+        immedieatlyExplosionSequence.OnComplete(DestroyCanonBall);
+        immedieatlyExplosionSequence.Pause();
     }
 
     public override void Init()
@@ -86,22 +128,29 @@ public class ExplosiveCanonBallController : CanonBallController
 
         materials.DOKill(true);
 
-
-        explosionSequence.Play();
+        if (!_isExploded)
+            immedieatlyExplosionSequence.Play();
     }
 
     public override void DestroyCanonBall()
     {
-
-
         canonBallModel.DOKill();
 
-        Destroy(gameObject, explosionSequence.Duration());
+        if (!_isExploded)
+        {
+            explosionSequence.Play();
+
+        }
+        else
+        {
+        }
+            Destroy(gameObject, explosionSequence.Duration());
+
     }
 
     void KnockBack(Rigidbody target)
     {
-        if(!target) return;
+        if (!target) return;
         Vector3 dir = (target.position - transform.position).normalized;
         target.AddForce(dir * CanonBallData.ExplosionKnockBack, ForceMode.Impulse);
     }

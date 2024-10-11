@@ -1,60 +1,3 @@
-// using System;
-// using DG.Tweening;
-// using UnityEngine;
-// using UnityEngine.AI;
-
-// public class EnemyMoveToPlayerCommand : Command
-// {
-//     Transform playerTransform;
-//     NavMeshAgent agent;
-//     float duration;
-//     public EnemyMoveToPlayerCommand(Transform playerTransform, NavMeshAgent agent, float duration)
-//     {
-//         this.duration = duration;
-//         this.playerTransform = playerTransform;
-//         this.agent = agent;
-//     }
-
-//     public override void Execute()
-//     {
-//         if (!playerTransform) return;
-
-
-//         if (agent.remainingDistance > 0)
-//         {
-
-//             Sequence sequence = DOTween.Sequence();
-//             sequence.AppendCallback(() =>
-//             {
-//                 agent.isStopped = false;
-
-//                 agent.SetDestination(playerTransform.position);
-
-//             });
-//             sequence.AppendInterval(duration)
-//                 .OnUpdate(() =>
-//                 {
-//                     if (agent.remainingDistance <= 0)
-//                     {
-//                         agent.isStopped = true;
-//                         agent.ResetPath();
-//                         base.Execute();
-//                         Debug.Log("Arrive");
-//                         sequence.Kill();
-//                     }
-//                 })
-//                 .OnComplete(() =>
-//                 {
-//                     base.Execute();
-//                     agent.isStopped = true;
-//                     agent.ResetPath();
-//                 });
-//             sequence.Play();
-//         }
-
-//     }
-
-// }
 using System;
 using DG.Tweening;
 using UnityEngine;
@@ -67,7 +10,7 @@ public class EnemyMoveToPlayerCommand : Command
     float duration;
     Func<bool> stopCondition;
 
-    public EnemyMoveToPlayerCommand(Transform playerTransform, NavMeshAgent agent, float duration,Func<bool> stopCondition)
+    public EnemyMoveToPlayerCommand(Transform playerTransform, NavMeshAgent agent, float duration, Func<bool> stopCondition, int piority)
     {
         this.duration = duration;
         this.playerTransform = playerTransform;
@@ -77,14 +20,16 @@ public class EnemyMoveToPlayerCommand : Command
 
     public override void Execute()
     {
-        if (!playerTransform) return;
+        if (!playerTransform || !agent)
+        {
+            base.Execute();
+            return;
+        }
 
-        // Set the destination to the player's position
         agent.isStopped = false;
         NavMeshPath path = new();
-        agent.CalculatePath(playerTransform.position,path);
+        agent.CalculatePath(playerTransform.position, path);
         agent.SetPath(path);
-        // agent.SetDestination(playerTransform.position);
         CameraManager.Instance.CloseUpEnemy(agent.transform);
 
         Sequence sequence = DOTween.Sequence();

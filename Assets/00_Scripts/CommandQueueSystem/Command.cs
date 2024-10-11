@@ -6,6 +6,9 @@ public abstract class Command : ICommand
     public delegate void OnCompleteCallback();
     private List<OnCompleteCallback> callbacksList = new();
     internal string name;
+
+    public int Piority { get => Piority; set => Piority = value; }
+
     public virtual void Execute()
     {
         foreach (OnCompleteCallback callback in callbacksList)

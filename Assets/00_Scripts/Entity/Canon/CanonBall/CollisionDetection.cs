@@ -17,6 +17,7 @@ public class CollisionDetection : MonoBehaviour
     {
         if ((canonBallController.CollisionMask.value & (1 << other.gameObject.layer)) != 0)
         {
+            Debug.Log(other.gameObject.name);
             _rigidbody.drag = 10;
             canonBallController.SmokeTrail.Stop();
             canonBallController.DestroyCanonBall();

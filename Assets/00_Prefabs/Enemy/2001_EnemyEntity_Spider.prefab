@@ -142,6 +142,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3991757503176248713, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3991757503176248713, guid: 277cc6e49133b334d9f455143a04b122,
+        type: 3}
       propertyPath: m_Name
       value: 2001_EnemyEntity_Spider
       objectReference: {fileID: 0}
@@ -183,22 +188,22 @@ PrefabInstance:
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 24.74744
+      value: 26.35
       objectReference: {fileID: 0}
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.7346153
+      value: -1.95
       objectReference: {fileID: 0}
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -59.117607
+      value: -92.73
       objectReference: {fileID: 0}
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.001621044
+      value: 0.48877802
       objectReference: {fileID: 0}
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
@@ -208,7 +213,7 @@ PrefabInstance:
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.99999875
+      value: -0.8724082
       objectReference: {fileID: 0}
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
@@ -223,7 +228,7 @@ PrefabInstance:
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -179.814
+      value: -121.479
       objectReference: {fileID: 0}
     - target: {fileID: 8895800849975720684, guid: 277cc6e49133b334d9f455143a04b122,
         type: 3}
@@ -416,12 +421,12 @@ NavMeshAgent:
   m_GameObject: {fileID: 3462298222666913749}
   m_Enabled: 1
   m_AgentTypeID: -1372625422
-  m_Radius: 1.39
+  m_Radius: 1.12
   m_Speed: 5
   m_Acceleration: 10
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -2124,7 +2129,7 @@ MonoBehaviour:
   baseTransform: {fileID: 0}
   Hips: {fileID: 2830256366619543969}
   ScaleReferenceMode: 3
-  finalScaleReference: 1.7290907
+  finalScaleReference: 1.7290916
   finalScaleReferenceSqrt: 0.1
   customScaleReferenceValue: 0.5
   DelayedInitialization: 0
@@ -2243,7 +2248,7 @@ MonoBehaviour:
   outlineMode: 3
   outlineColor: {r: 1, g: 0, b: 0, a: 1}
   outlineWidth: 5.5
-  precomputeOutline: 0
+  precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
 --- !u!4 &6775549454805589401 stripped

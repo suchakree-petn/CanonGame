@@ -11,23 +11,23 @@ public class EnemyManager : SerializedSingleton<EnemyManager>
 
 
     [FoldoutGroup("Config", true)] public float MoveToPlayerDuration = 2;
-    [FoldoutGroup("Alive Enemy", true)] public List<Transform> AliveEnemy = new();
+    [FoldoutGroup("Alive Enemy", true)] public Dictionary<int, EnemyController> AliveEnemy = new();
     [FoldoutGroup("Alive Enemy", true), ReadOnly]
-    public Transform ClosestAliveEnemy
+    public EnemyController ClosestAliveEnemy
     {
         get
         {
             float closestDistance = Mathf.Infinity;
-            Transform closestAliveEnemy = AliveEnemy[0];
+            EnemyController closestAliveEnemy = null;
             Vector3 canonPos = CanonController.Instance.transform.position;
             foreach (var enemy in AliveEnemy)
             {
-                float distance = Vector3.Distance(enemy.position, canonPos);
+                float distance = Vector3.Distance(enemy.Value.transform.position, canonPos);
 
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    closestAliveEnemy = enemy;
+                    closestAliveEnemy = enemy.Value;
                 }
             }
 
@@ -48,7 +48,6 @@ public class EnemyManager : SerializedSingleton<EnemyManager>
 
     private void OnDisable()
     {
-        if(EditorApplication.isPlaying) return;
 
         // GameManager.Instance.OnStartEnemyTurn -= CameraManager.Instance.ShowAllEnemy;
 
@@ -60,7 +59,10 @@ public class EnemyManager : SerializedSingleton<EnemyManager>
 
     }
 
-
+    public int GetPiority()
+    {
+        return 0;
+    }
 
 
 }
