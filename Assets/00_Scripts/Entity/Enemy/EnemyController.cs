@@ -102,7 +102,9 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private void OnDestroy()
     {
+        if(EnemyManager.Instance){
         EnemyManager.Instance.AliveEnemy.Remove(GetInstanceID());
+        }
 
     }
 

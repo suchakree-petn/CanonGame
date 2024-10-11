@@ -63,7 +63,7 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
 
     private void Update()
     {
-        RotateTowardTarget();
+        // RotateTowardTarget(EnemyManager.Instance.ClosestAliveEnemy);
     }
 
 
@@ -79,29 +79,29 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
 
         if (Input.GetKey(KeyCode.W))
         {
-            OnMoving?.Invoke();
             TiltUp();
+            OnMoving?.Invoke();
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            OnMoving?.Invoke();
 
             TiltDown();
+            OnMoving?.Invoke();
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            OnMoving?.Invoke();
 
             TurnLeft();
+            OnMoving?.Invoke();
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            OnMoving?.Invoke();
 
             TurnRight();
+            OnMoving?.Invoke();
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
@@ -133,9 +133,8 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     }
 
 
-    private void RotateTowardTarget()
+    private void RotateTowardTarget(EnemyController enemyController)
     {
-        EnemyController enemyController = EnemyManager.Instance.ClosestAliveEnemy;
         if (!enemyController) return;
         Vector3 dir = (enemyController.transform.position - firePointTransform.position).normalized;
         dir = Vector3.ProjectOnPlane(dir, Vector3.up);
