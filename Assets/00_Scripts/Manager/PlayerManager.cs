@@ -89,7 +89,7 @@ public class PlayerManager : SerializedSingleton<PlayerManager>
         return canonBallDict[canonBallPool.Peek()];
     }
 
-    private void CheckEndTurn()
+    public void CheckEndTurn()
     {
         if (canonBallPool.Count <= 0)
         {

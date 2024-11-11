@@ -17,6 +17,9 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     [FoldoutGroup("Canon Config", true), SerializeField] float turnSpeed, tiltSpeed;
     [FoldoutGroup("Canon Config", true), SerializeField] bool isReadyToFire;
     bool IsReadyToFire => isReadyToFire;
+    [FoldoutGroup("Canon Config", true), SerializeField] float fireRate = 1;
+    float _fireRate;
+
 
     public Vector3 CanonBallDropPoint => Projection.CanonBallDropPoint;
     public EnemyController HitEnemy => Projection.HitEnemy;
@@ -45,11 +48,11 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         CameraManager.Instance.ActiveCamera(CameraType.MainCam, 100);
 
         OnMoving += SimulateProjection;
-        CameraManager.Instance.OnFinishFollowCamera += LockToTarget;
+        // CameraManager.Instance.OnFinishFollowCamera += LockToTarget;
         OnFireCanon += (canonball) => SimulateProjection();
 
 
-        GameManager.Instance.OnStartPlayerTurn += LockToTarget;
+        // GameManager.Instance.OnStartPlayerTurn += LockToTarget;
         GameManager.Instance.OnStartPlayerTurn += Projection.ShowProjectionLine;
         GameManager.Instance.OnStartPlayerTurn += SimulateProjection;
         GameManager.Instance.OnStartEnemyTurn += Projection.HideProjectionLine;
@@ -63,7 +66,12 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
 
     private void Update()
     {
-        // RotateTowardTarget(EnemyManager.Instance.ClosestAliveEnemy);
+        // if (GameState.PlayerTurn == GameManager.Instance.CurrentGameState)
+        // {
+        //     RotateTowardTarget(EnemyManager.Instance.ClosestAliveEnemy);
+        //     LockToTarget();
+        //     PlayerManager.Instance.CheckEndTurn();
+        // }
     }
 
 
@@ -109,8 +117,25 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
             if (!IsReadyToFire) return;
 
             FireCanonBall();
+            _fireRate = 0;
+
 
         }
+
+        if (_fireRate >= fireRate)
+        {
+            isReadyToFire = true;
+        }
+        else
+        {
+            isReadyToFire = false;
+            _fireRate += Time.deltaTime;
+        }
+
+        // if (IsReadyToFire)
+        // {
+        //     FireCanonBall();
+        // }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
@@ -176,7 +201,6 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
                     currentTilt -= 3f;
                     canonTiltTransform.localRotation = Quaternion.Euler(currentTilt, 0, 0);
                 }
-                Debug.Log("Inside");
                 break;
             }
         }

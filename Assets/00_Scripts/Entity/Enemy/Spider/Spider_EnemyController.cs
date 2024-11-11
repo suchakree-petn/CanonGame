@@ -29,7 +29,7 @@ public class Spider_EnemyController : EnemyController
     {
         base.OnEnable();
         GameManager.Instance.OnStartEnemyTurn += AttackCommand;
-        OnEnemyDead_Local += ()=> GameManager.Instance.OnStartEnemyTurn -= AttackCommand;
+        OnEnemyDead_Local += () => GameManager.Instance.OnStartEnemyTurn -= AttackCommand;
     }
 
     protected override void OnDisable()
@@ -87,7 +87,7 @@ public class Spider_EnemyController : EnemyController
     public void AttackCommand()
     {
 
-        Command attackCommand = new EnemyAttackCommand(PlayAttackAnimation, attackClip.length, CanAttack);
+        Command attackCommand = new EnemyAttackCommand(PlayAttackAnimation, attackClip.length, CanAttack, Piority);
         GameManager.Instance.AddCommand(attackCommand);
     }
 

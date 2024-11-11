@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using Unity.Mathematics;
-using UnityEditor;
 
 public class EnemyManager : SerializedSingleton<EnemyManager>
 {
@@ -12,6 +10,15 @@ public class EnemyManager : SerializedSingleton<EnemyManager>
 
     [FoldoutGroup("Config", true)] public float MoveToPlayerDuration = 2;
     [FoldoutGroup("Alive Enemy", true)] public Dictionary<int, EnemyController> AliveEnemy = new();
+    [FoldoutGroup("Alive Enemy", true)]
+    public List<EnemyController> OrderedEnemy
+    {
+        get
+        {
+            return ReorderEnemies();
+        }
+    }
+
     [FoldoutGroup("Alive Enemy", true), ReadOnly]
     public EnemyController ClosestAliveEnemy
     {
@@ -59,9 +66,24 @@ public class EnemyManager : SerializedSingleton<EnemyManager>
 
     }
 
-    public int GetPiority()
+
+    [Button]
+    private List<EnemyController> ReorderEnemies()
     {
-        return 0;
+        if (AliveEnemy == null || AliveEnemy.Count == 0) return null;
+
+        List<EnemyController> enemyControllers = AliveEnemy.Values.ToList();
+        enemyControllers.Sort((a, b) => a.DistanceToTarget.CompareTo(b.DistanceToTarget));
+
+        return enemyControllers;
+
+    }
+
+    public int GetPiority(EnemyController enemyController)
+    {
+        if(!enemyController) return int.MaxValue;
+
+        return OrderedEnemy.IndexOf(enemyController);
     }
 
 

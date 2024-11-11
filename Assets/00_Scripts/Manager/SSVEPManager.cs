@@ -32,16 +32,16 @@ public class SSVEPManager : SerializedSingleton<SSVEPManager>
 
     private void Start()
     {
-        CameraManager.Instance.OnFinishFollowCamera += MapFlickeringWithEnemies;
-        CameraManager.Instance.OnFinishFollowCamera += UpdateFlickeringUIAtEnemies;
+        // CameraManager.Instance.OnFinishFollowCamera += MapFlickeringWithEnemies;
+        // CameraManager.Instance.OnFinishFollowCamera += UpdateFlickeringUIAtEnemies;
 
-        GameManager.Instance.OnStartPlayerTurn += MapFlickeringWithEnemies;
-        GameManager.Instance.OnStartPlayerTurn += UpdateFlickeringUIAtEnemies;
-        GameManager.Instance.OnStartPlayerTurn += ShowFlickerings;
+        // GameManager.Instance.OnStartPlayerTurn += MapFlickeringWithEnemies;
+        // GameManager.Instance.OnStartPlayerTurn += UpdateFlickeringUIAtEnemies;
+        // GameManager.Instance.OnStartPlayerTurn += ShowFlickerings;
 
-        GameManager.Instance.OnStartEnemyTurn += HideFlickerings;
+        // GameManager.Instance.OnStartEnemyTurn += HideFlickerings;
 
-        CanonController.Instance.OnMoving += UpdateFlickeringUIAtEnemies;
+        // CanonController.Instance.OnMoving += UpdateFlickeringUIAtEnemies;
 
 
     }
