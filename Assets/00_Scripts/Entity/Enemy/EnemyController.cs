@@ -37,6 +37,23 @@ public class EnemyController : MonoBehaviour, IDamageable
     [FoldoutGroup("Mesh & Material")][ReadOnly, SerializeField] protected Material dissolveMaterial;
     protected OutlineController outlineController;
 
+
+    public float DistanceToTarget
+    {
+        get
+        {
+            return Vector3.Distance(transform.position, Target.position);
+        }
+    }
+
+    public int Piority
+    {
+        get
+        {
+            return EnemyManager.Instance.GetPiority(this);
+        }
+    }
+
     protected virtual void Awake()
     {
         dissolveMaterial = mesh.material;
@@ -102,7 +119,10 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private void OnDestroy()
     {
-        EnemyManager.Instance.AliveEnemy.Remove(GetInstanceID());
+        if (EnemyManager.Instance)
+        {
+            EnemyManager.Instance.AliveEnemy.Remove(GetInstanceID());
+        }
 
     }
 
@@ -162,7 +182,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     public virtual void MoveToPlayer()
     {
-        Command moveToPlayerCommand = new EnemyMoveToPlayerCommand(Target, agent, EnemyManager.Instance.MoveToPlayerDuration, StopMoveCondition, 0);
+        Command moveToPlayerCommand = new EnemyMoveToPlayerCommand(Target, agent, EnemyManager.Instance.MoveToPlayerDuration, StopMoveCondition, Piority);
         GameManager.Instance.AddCommand(moveToPlayerCommand);
     }
 

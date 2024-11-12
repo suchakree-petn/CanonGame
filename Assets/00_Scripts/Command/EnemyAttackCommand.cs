@@ -9,11 +9,12 @@ public class EnemyAttackCommand : Command
     Func<bool> condition;
 
 
-    public EnemyAttackCommand(Action attackAction, float duration, Func<bool> condition)
+    public EnemyAttackCommand(Action attackAction, float duration, Func<bool> condition,int piority): base(piority)
     {
         this.duration = duration;
         this.attackAction = attackAction;
         this.condition = condition;
+        Piority = piority;
     }
 
     public override void Execute()

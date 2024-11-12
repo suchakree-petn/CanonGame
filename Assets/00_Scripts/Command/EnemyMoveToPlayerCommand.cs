@@ -10,12 +10,13 @@ public class EnemyMoveToPlayerCommand : Command
     float duration;
     Func<bool> stopCondition;
 
-    public EnemyMoveToPlayerCommand(Transform playerTransform, NavMeshAgent agent, float duration, Func<bool> stopCondition, int piority)
+    public EnemyMoveToPlayerCommand(Transform playerTransform, NavMeshAgent agent, float duration, Func<bool> stopCondition, int piority) : base(piority)
     {
         this.duration = duration;
         this.playerTransform = playerTransform;
         this.agent = agent;
         this.stopCondition = stopCondition;
+        this.Piority = piority;
     }
 
     public override void Execute()

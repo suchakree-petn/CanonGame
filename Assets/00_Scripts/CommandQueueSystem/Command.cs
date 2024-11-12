@@ -5,9 +5,12 @@ public abstract class Command : ICommand
 {
     public delegate void OnCompleteCallback();
     private List<OnCompleteCallback> callbacksList = new();
-    internal string name;
+    public int Piority;
 
-    public int Piority { get => Piority; set => Piority = value; }
+    public Command(int piority)
+    {
+        this.Piority = piority;
+    }
 
     public virtual void Execute()
     {
@@ -34,8 +37,4 @@ public abstract class Command : ICommand
         return callbacksList.Count;
     }
 
-    public virtual string GetCommandName()
-    {
-        return name;
-    }
 }

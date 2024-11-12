@@ -11,9 +11,6 @@ public class CommandQueue
     public Action OnLastCommandExecuted;
 
     [BoxGroup("Command")]
-    public Queue<Command> commandsQueue;
-
-    [BoxGroup("Command")]
     public List<Command> commandsQueueList = new();
 
     [BoxGroup("Command")]
@@ -23,14 +20,12 @@ public class CommandQueue
 
     public CommandQueue()
     {
-        commandsQueue = new();
         commandsQueueList = new();
     }
 
     public void AddCommand(Command command)
     {
         command.OnComplete(OnFinishExecute);
-        commandsQueue.Enqueue(command);
 
         commandsQueueList.Add(command);
         // TryExecuteCommands();
@@ -40,14 +35,17 @@ public class CommandQueue
     public void TryExecuteCommands()
     {
         if (isExecuting) return;
-        if (commandsQueue.Count > 0)
+        if (commandsQueueList.Count > 0)
         {
+            Debug.Log("Sorting");
+            commandsQueueList.Sort((a, b) => a.Piority.CompareTo(b.Piority));
+
             isExecuting = true;
             // Debug.Log($"Command queue size: {commandsQueue.Count}");
-            Command command = commandsQueue.Dequeue();
+            Command command = commandsQueueList[0];
             commandsQueueList.Remove(command);
 
-            if (commandsQueue.Count > 0)
+            if (commandsQueueList.Count > 0)
             {
                 command.OnComplete(TryExecuteCommands);
             }
@@ -55,7 +53,7 @@ public class CommandQueue
             {
 
             }
-            if (commandsQueue.Count == 0)
+            if (commandsQueueList.Count == 0)
             {
                 command.OnComplete(LastCommandExecuted);
             }
@@ -71,7 +69,7 @@ public class CommandQueue
 
     public Command GetLastCommand()
     {
-        return commandsQueue.Peek();
+        return commandsQueueList[^1];
     }
 
     private void LastCommandExecuted()

@@ -17,6 +17,9 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     [FoldoutGroup("Canon Config", true), SerializeField] float turnSpeed, tiltSpeed;
     [FoldoutGroup("Canon Config", true), SerializeField] bool isReadyToFire;
     bool IsReadyToFire => isReadyToFire;
+    [FoldoutGroup("Canon Config", true), SerializeField] float fireRate = 1;
+    float _fireRate;
+
 
     public Vector3 CanonBallDropPoint => Projection.CanonBallDropPoint;
     public EnemyController HitEnemy => Projection.HitEnemy;
@@ -45,11 +48,11 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         CameraManager.Instance.ActiveCamera(CameraType.MainCam, 100);
 
         OnMoving += SimulateProjection;
-        CameraManager.Instance.OnFinishFollowCamera += LockToTarget;
+        // CameraManager.Instance.OnFinishFollowCamera += LockToTarget;
         OnFireCanon += (canonball) => SimulateProjection();
 
 
-        GameManager.Instance.OnStartPlayerTurn += LockToTarget;
+        // GameManager.Instance.OnStartPlayerTurn += LockToTarget;
         GameManager.Instance.OnStartPlayerTurn += Projection.ShowProjectionLine;
         GameManager.Instance.OnStartPlayerTurn += SimulateProjection;
         GameManager.Instance.OnStartEnemyTurn += Projection.HideProjectionLine;
@@ -63,7 +66,12 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
 
     private void Update()
     {
-        // RotateTowardTarget();
+        // if (GameState.PlayerTurn == GameManager.Instance.CurrentGameState)
+        // {
+        //     RotateTowardTarget(EnemyManager.Instance.ClosestAliveEnemy);
+        //     LockToTarget();
+        //     PlayerManager.Instance.CheckEndTurn();
+        // }
     }
 
 
@@ -77,50 +85,59 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     {
         if (!GameManager.Instance.IsPlayerTurn) return;
 
-        if (Input.GetKey(KeyCode.W) )
+        if (Input.GetKey(KeyCode.W))
         {
-            OnMoving?.Invoke();
             TiltUp();
+            OnMoving?.Invoke();
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            OnMoving?.Invoke();
 
             TiltDown();
+            OnMoving?.Invoke();
         }
 
-        if (Input.GetKey(KeyCode.A)
-        ||EEGReceiver.Instance.Data == "6Hz"
-        )
+        if (Input.GetKey(KeyCode.A))
         {
-            OnMoving?.Invoke();
 
             TurnLeft();
+            OnMoving?.Invoke();
         }
 
-        if (Input.GetKey(KeyCode.D)
-        ||EEGReceiver.Instance.Data == "12Hz"
-        )
+        if (Input.GetKey(KeyCode.D))
         {
-            OnMoving?.Invoke();
 
             TurnRight();
+            OnMoving?.Invoke();
         }
 
-        if (Input.GetKeyUp(KeyCode.Space)
-        ||EEGReceiver.Instance.Data == "24Hz"
-        )
+        if (Input.GetKeyUp(KeyCode.Space))
         {
             if (!IsReadyToFire) return;
 
             FireCanonBall();
+            _fireRate = 0;
+
 
         }
 
-        if (Input.GetKeyUp(KeyCode.LeftShift)
-        ||EEGReceiver.Instance.Data == "30Hz"
-        )
+        if (_fireRate >= fireRate)
+        {
+            isReadyToFire = true;
+        }
+        else
+        {
+            isReadyToFire = false;
+            _fireRate += Time.deltaTime;
+        }
+
+        // if (IsReadyToFire)
+        // {
+        //     FireCanonBall();
+        // }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             if (CameraManager.Instance.IsBirdEyeViewCamActive)
             {
@@ -141,9 +158,8 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     }
 
 
-    private void RotateTowardTarget()
+    private void RotateTowardTarget(EnemyController enemyController)
     {
-        EnemyController enemyController = EnemyManager.Instance.ClosestAliveEnemy;
         if (!enemyController) return;
         Vector3 dir = (enemyController.transform.position - firePointTransform.position).normalized;
         dir = Vector3.ProjectOnPlane(dir, Vector3.up);
@@ -185,7 +201,6 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
                     currentTilt -= 3f;
                     canonTiltTransform.localRotation = Quaternion.Euler(currentTilt, 0, 0);
                 }
-                Debug.Log("Inside");
                 break;
             }
         }
