@@ -63,7 +63,7 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
 
     private void Update()
     {
-        RotateTowardTarget();
+        // RotateTowardTarget();
     }
 
 
@@ -77,7 +77,7 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     {
         if (!GameManager.Instance.IsPlayerTurn) return;
 
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) )
         {
             OnMoving?.Invoke();
             TiltUp();
@@ -90,21 +90,27 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
             TiltDown();
         }
 
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A)
+        ||EEGReceiver.Instance.Data == "6Hz"
+        )
         {
             OnMoving?.Invoke();
 
             TurnLeft();
         }
 
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D)
+        ||EEGReceiver.Instance.Data == "12Hz"
+        )
         {
             OnMoving?.Invoke();
 
             TurnRight();
         }
 
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space)
+        ||EEGReceiver.Instance.Data == "24Hz"
+        )
         {
             if (!IsReadyToFire) return;
 
@@ -112,7 +118,9 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
 
         }
 
-        if (Input.GetKeyUp(KeyCode.LeftShift))
+        if (Input.GetKeyUp(KeyCode.LeftShift)
+        ||EEGReceiver.Instance.Data == "30Hz"
+        )
         {
             if (CameraManager.Instance.IsBirdEyeViewCamActive)
             {
