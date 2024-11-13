@@ -129,7 +129,7 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         //  || EEGReceiver.Instance.Data? == frequencyDown+"Hz"
          )
         {
-            if (!IsReadyToFire) return;
+            if (!IsReadyToFire || CameraManager.Instance.IsFollowCamActive) return;
 
             FireCanonBall();
             _fireRate = 0;
