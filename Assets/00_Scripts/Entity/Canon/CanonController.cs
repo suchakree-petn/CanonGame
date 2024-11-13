@@ -9,7 +9,12 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     public Action OnTakeDamage;
     public Action OnMoving;
 
+    public CommandUI commandUI;
 
+    [FoldoutGroup("Frequency Config", true)] public string frequencyDown;
+    [FoldoutGroup("Frequency Config", true)] public string frequencyLeft;
+    [FoldoutGroup("Frequency Config", true)] public string frequencyUp;
+    [FoldoutGroup("Frequency Config", true)] public string frequencyRight;
 
     [FoldoutGroup("Canon Config", true)] public CanonCharacterData CanonCharacterData;
     [FoldoutGroup("Canon Config", true), SerializeField] float minTurn, maxTurn, maxTilt, minTilt;
@@ -85,34 +90,44 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     {
         if (!GameManager.Instance.IsPlayerTurn) return;
 
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W)
+        //  || EEGReceiver.Instance.Data? == frequencyLeft+"Hz" && CameraManager.Instance.IsBirdEyeViewCamActive
+         )
         {
             TiltUp();
             OnMoving?.Invoke();
         }
 
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S)
+        //  || EEGReceiver.Instance.Data? == frequencyRight+"Hz" && CameraManager.Instance.IsBirdEyeViewCamActive
+         )
         {
 
             TiltDown();
             OnMoving?.Invoke();
         }
 
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A)
+        //  || EEGReceiver.Instance.Data? == frequencyLeft+"Hz" && !CameraManager.Instance.IsBirdEyeViewCamActive
+         )
         {
 
             TurnLeft();
             OnMoving?.Invoke();
         }
 
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) 
+        //  ||EEGReceiver.Instance.Data? == frequencyRight+"Hz" && !CameraManager.Instance.IsBirdEyeViewCamActive
+         )
         {
 
             TurnRight();
             OnMoving?.Invoke();
         }
 
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space)
+        //  || EEGReceiver.Instance.Data? == frequencyDown+"Hz"
+         )
         {
             if (!IsReadyToFire) return;
 
@@ -137,7 +152,9 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         //     FireCanonBall();
         // }
 
-        if (Input.GetKeyUp(KeyCode.LeftShift))
+        if (Input.GetKeyUp(KeyCode.LeftShift)
+        //  || EEGReceiver.Instance.Data == frequencyUp+"Hz"
+         )
         {
             if (CameraManager.Instance.IsBirdEyeViewCamActive)
             {
@@ -147,6 +164,7 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
             {
                 CameraManager.Instance.ActiveCamera(CameraType.BirdEyeView, int.MaxValue - 1);
             }
+            commandUI.ChangeUIOnView();
         }
 
 
