@@ -138,11 +138,13 @@ public class ExplosiveCanonBallController : CanonBallController
 
         if (!_isExploded)
         {
-            explosionSequence.Play();
+            // explosionSequence.Play();
+            immedieatlyExplosionSequence.Play();
 
         }
   
-        Destroy(gameObject, explosionSequence.Duration());
+        // Destroy(gameObject, explosionSequence.Duration());
+        Destroy(gameObject, immedieatlyExplosionSequence.Duration());
 
     }
 

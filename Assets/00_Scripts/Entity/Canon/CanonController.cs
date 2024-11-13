@@ -59,8 +59,10 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
 
         // GameManager.Instance.OnStartPlayerTurn += LockToTarget;
         GameManager.Instance.OnStartPlayerTurn += Projection.ShowProjectionLine;
+        GameManager.Instance.OnStartPlayerTurn += Projection.ShowTargetDestination;
         GameManager.Instance.OnStartPlayerTurn += SimulateProjection;
         GameManager.Instance.OnStartEnemyTurn += Projection.HideProjectionLine;
+        GameManager.Instance.OnStartEnemyTurn += Projection.HideTargetDestination;
 
         CameraManager.Instance.TargetGroup.AddMember(transform, 1, 0);
 
@@ -199,6 +201,7 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         else
         {
             Projection.HideProjectionLine();
+            Projection.HideTargetDestination();
         }
     }
 
@@ -233,6 +236,7 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         if (currentCanonBall == null) return null;
 
         Projection.HideProjectionLine();
+        Projection.HideTargetDestination();
 
         CameraManager cameraManager = CameraManager.Instance;
         Transform canonballTransform = Instantiate(currentCanonBall.CanonBall_prf, firePointTransform.position, Quaternion.identity);

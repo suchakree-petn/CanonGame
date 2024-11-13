@@ -1,10 +1,10 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class Projection : MonoBehaviour
 {
-    [SerializeField] private LineRenderer lineRenderer;
-
+    [FoldoutGroup("Config", true)][SerializeField] private LayerMask layerMask;
 
     [FoldoutGroup("Config", true), Range(10, 100), SerializeField]
     private int LinePoints = 25;
@@ -16,16 +16,28 @@ public class Projection : MonoBehaviour
     [FoldoutGroup("Config", true), ReadOnly] public EnemyController HitEnemy;
 
 
-    [SerializeField] private LayerMask layerMask;
+
+    [FoldoutGroup("Reference"), SerializeField, Required] DecalProjector targetDestination_prf;
+    DecalProjector _targetDestination;
+
+    [FoldoutGroup("Reference"), SerializeField, Required] LineRenderer lineRenderer;
+
 
     private void Awake()
     {
-
+        if (targetDestination_prf)
+        {
+            _targetDestination = Instantiate(targetDestination_prf);
+        }
     }
 
     private void Update()
     {
 
+    }
+
+    private void OnDrawGizmos()
+    {
     }
 
     public void DrawProjection(Vector3 startPosition, Vector3 startVelocity, float canonBallGravityMultiplier)
@@ -53,6 +65,7 @@ public class Projection : MonoBehaviour
                 lineRenderer.SetPosition(i, hit.point);
                 lineRenderer.positionCount = i + 1;
                 CanonBallDropPoint = hit.point;
+                UpdateTargetDestinationDecal();
                 HitEnemy = hit.transform.GetComponentInParent<EnemyController>();
                 return;
             }
@@ -69,8 +82,19 @@ public class Projection : MonoBehaviour
         lineRenderer.enabled = true;
     }
 
-    private void OnDrawGizmos()
+    public void HideTargetDestination()
     {
+        _targetDestination.gameObject.SetActive(false);
+    }
+
+    public void ShowTargetDestination()
+    {
+        _targetDestination.gameObject.SetActive(true);
+    }
+
+    private void UpdateTargetDestinationDecal()
+    {
+        _targetDestination.transform.position = CanonBallDropPoint;
     }
 
 }

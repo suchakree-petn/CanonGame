@@ -133,6 +133,7 @@ public class CameraManager : Singleton<CameraManager>
         followCamSequence.AppendCallback(() =>
         {
             CanonController.Instance.Projection.ShowProjectionLine();
+            CanonController.Instance.Projection.ShowTargetDestination();
 
             DeactiveCamera(CameraType.FollowCam);
             OnFinishFollowCamera?.Invoke();
