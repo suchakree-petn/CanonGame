@@ -2,6 +2,7 @@ using System.Collections;
 using DG.Tweening;
 using FIMSpace.FProceduralAnimation;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 public class Spider_EnemyController : EnemyController
 {
@@ -51,14 +52,15 @@ public class Spider_EnemyController : EnemyController
     {
         RaycastHit[] hits = Physics.SphereCastAll(
             attackPointTransform.position,
-            EnemyCharacterData.AttackRange + agent.stoppingDistance,
+            EnemyCharacterData.AttackRange,
             attackPointTransform.forward,
-            EnemyCharacterData.AttackRange + agent.stoppingDistance,
+            EnemyCharacterData.AttackRange,
             EnemyCharacterData.TargetLayer);
 
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.transform.root.TryGetComponent(out IDamageable damageable) && hit.collider.isTrigger)
+            IDamageable damageable = hit.collider.transform.GetComponentInParent<IDamageable>();
+            if (damageable != null && hit.collider.isTrigger)
             {
                 Debug.Log("Spider hit " + hit.collider.transform.root.name);
                 damageable.TakeDamage(EnemyCharacterData.Attack);

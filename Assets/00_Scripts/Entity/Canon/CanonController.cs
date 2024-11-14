@@ -55,21 +55,49 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         OnMoving += SimulateProjection;
         // CameraManager.Instance.OnFinishFollowCamera += LockToTarget;
         OnFireCanon += (canonball) => SimulateProjection();
+        // OnFireCanon += (canonball) => commandUI.Hide();
 
 
         // GameManager.Instance.OnStartPlayerTurn += LockToTarget;
-        GameManager.Instance.OnStartPlayerTurn += Projection.ShowProjectionLine;
-        GameManager.Instance.OnStartPlayerTurn += Projection.ShowTargetDestination;
-        GameManager.Instance.OnStartPlayerTurn += SimulateProjection;
-        GameManager.Instance.OnStartEnemyTurn += Projection.HideProjectionLine;
-        GameManager.Instance.OnStartEnemyTurn += Projection.HideTargetDestination;
+
+
 
         CameraManager.Instance.TargetGroup.AddMember(transform, 1, 0);
 
 
 
+
     }
 
+    private void OnEnable()
+    {
+        GameManager.Instance.OnStartPlayerTurn += Projection.ShowProjectionLine;
+        GameManager.Instance.OnStartPlayerTurn += Projection.ShowTargetDestination;
+        GameManager.Instance.OnStartPlayerTurn += SimulateProjection;
+        GameManager.Instance.OnStartPlayerTurn += commandUI.Show;
+
+        GameManager.Instance.OnStartEnemyTurn += Projection.HideProjectionLine;
+        GameManager.Instance.OnStartEnemyTurn += Projection.HideTargetDestination;
+        GameManager.Instance.OnStartEnemyTurn += commandUI.Hide;
+
+        // CameraManager.Instance.OnFinishFollowCamera += commandUI.Show;
+
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnStartPlayerTurn -= Projection.ShowProjectionLine;
+        GameManager.Instance.OnStartPlayerTurn -= Projection.ShowTargetDestination;
+        GameManager.Instance.OnStartPlayerTurn -= SimulateProjection;
+        GameManager.Instance.OnStartPlayerTurn -= commandUI.Show;
+
+        GameManager.Instance.OnStartEnemyTurn -= Projection.HideProjectionLine;
+        GameManager.Instance.OnStartEnemyTurn -= Projection.HideTargetDestination;
+        GameManager.Instance.OnStartEnemyTurn -= commandUI.Hide;
+
+        // CameraManager.Instance.OnFinishFollowCamera -= commandUI.Show;
+
+    }
 
     private void Update()
     {
@@ -118,8 +146,8 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
             OnMoving?.Invoke();
         }
 
-        if (Input.GetKey(KeyCode.D) 
-        //  ||EEGReceiver.Instance.Data? == frequencyRight+"Hz" && !CameraManager.Instance.IsBirdEyeViewCamActive
+        if (Input.GetKey(KeyCode.D)
+         //  ||EEGReceiver.Instance.Data? == frequencyRight+"Hz" && !CameraManager.Instance.IsBirdEyeViewCamActive
          )
         {
 
@@ -170,11 +198,6 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         }
 
 
-    }
-
-
-    private void OnEnable()
-    {
     }
 
 
@@ -262,8 +285,6 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         });
         sequence.OnComplete(() =>
         {
-
-
             canonballTransform.gameObject.SetActive(true);
 
             Rigidbody canonRb = canonballTransform.GetComponent<Rigidbody>();

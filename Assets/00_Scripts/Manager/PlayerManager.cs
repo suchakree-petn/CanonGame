@@ -36,17 +36,16 @@ public class PlayerManager : SerializedSingleton<PlayerManager>
 
     private void OnDisable()
     {
-        if (GameManager.Instance){
-        GameManager.Instance.OnStartPlayerTurn -= ReloadCanonBallPool_Random;
+        if (GameManager.Instance)
+        {
+            GameManager.Instance.OnStartPlayerTurn -= ReloadCanonBallPool_Random;
 
         }
 
-        if(CameraManager.Instance){
-        CameraManager.Instance.OnFinishFollowCamera -= CheckEndTurn;
-
+        if (CameraManager.Instance)
+        {
+            CameraManager.Instance.OnFinishFollowCamera -= CheckEndTurn;
         }
-
-
 
     }
 

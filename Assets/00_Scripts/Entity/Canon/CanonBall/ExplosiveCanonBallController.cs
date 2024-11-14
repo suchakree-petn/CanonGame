@@ -142,9 +142,12 @@ public class ExplosiveCanonBallController : CanonBallController
             immedieatlyExplosionSequence.Play();
 
         }
-  
+
         // Destroy(gameObject, explosionSequence.Duration());
-        Destroy(gameObject, immedieatlyExplosionSequence.Duration());
+        if (immedieatlyExplosionSequence.IsActive())
+        {
+            Destroy(gameObject, immedieatlyExplosionSequence.Duration());
+        }
 
     }
 
