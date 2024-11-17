@@ -10,7 +10,8 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     public Action OnMoving;
 
     public CommandUI commandUI;
-
+    [SerializeField] float cooldown = 2;
+    float _cooldown = 0;
     [FoldoutGroup("Frequency Config", true)] public string frequencyDown;
     [FoldoutGroup("Frequency Config", true)] public string frequencyLeft;
     [FoldoutGroup("Frequency Config", true)] public string frequencyUp;
@@ -107,66 +108,21 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         //     LockToTarget();
         //     PlayerManager.Instance.CheckEndTurn();
         // }
-    }
-
-
-
-    private void FixedUpdate()
-    {
-
-    }
-
-    void LateUpdate()
-    {
-        if (!GameManager.Instance.IsPlayerTurn) return;
-
-        if (Input.GetKey(KeyCode.W)
-        //  || EEGReceiver.Instance.Data? == frequencyLeft+"Hz" && CameraManager.Instance.IsBirdEyeViewCamActive
-         )
-        {
-            TiltUp();
-            OnMoving?.Invoke();
-        }
-
-        if (Input.GetKey(KeyCode.S)
-        //  || EEGReceiver.Instance.Data? == frequencyRight+"Hz" && CameraManager.Instance.IsBirdEyeViewCamActive
-         )
-        {
-
-            TiltDown();
-            OnMoving?.Invoke();
-        }
-
-        if (Input.GetKey(KeyCode.A)
-        //  || EEGReceiver.Instance.Data? == frequencyLeft+"Hz" && !CameraManager.Instance.IsBirdEyeViewCamActive
-         )
-        {
-
-            TurnLeft();
-            OnMoving?.Invoke();
-        }
-
-        if (Input.GetKey(KeyCode.D)
-         //  ||EEGReceiver.Instance.Data? == frequencyRight+"Hz" && !CameraManager.Instance.IsBirdEyeViewCamActive
-         )
-        {
-
-            TurnRight();
-            OnMoving?.Invoke();
-        }
-
         if (Input.GetKeyUp(KeyCode.Space)
-        //  || EEGReceiver.Instance.Data? == frequencyDown+"Hz"
-         )
+        || EEGReceiver.Instance.Data == frequencyDown + "Hz"
+   )
         {
-            if (!IsReadyToFire || CameraManager.Instance.IsFollowCamActive) return;
+            if (IsReadyToFire && !CameraManager.Instance.IsFollowCamActive)
+            {
+                isReadyToFire = false;
 
-            FireCanonBall();
-            _fireRate = 0;
+                FireCanonBall();
+                _fireRate = 0;
+            }
+
 
 
         }
-
         if (_fireRate >= fireRate)
         {
             isReadyToFire = true;
@@ -176,6 +132,64 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
             isReadyToFire = false;
             _fireRate += Time.deltaTime;
         }
+    }
+
+
+
+    private void FixedUpdate()
+    {
+
+    }
+    string inputCanon = "Non";
+    void LateUpdate()
+    {
+        // string inputEEG = EEGReceiver.Instance.Data;
+        Debug.Log("IncanonControll " + EEGReceiver.Instance.Data);
+        // if(inputCanon != inputEEG){
+        //     inputCanon = inputEEG;
+        //     Debug.Log("inputCanon : "+inputCanon);
+        // }
+
+        if (!GameManager.Instance.IsPlayerTurn) return;
+
+        if (Input.GetKey(KeyCode.W)
+         || EEGReceiver.Instance.Data == frequencyLeft + "Hz" && CameraManager.Instance.IsBirdEyeViewCamActive
+         )
+        {
+            TiltUp();
+            OnMoving?.Invoke();
+        }
+
+        if (Input.GetKey(KeyCode.S)
+         || EEGReceiver.Instance.Data == frequencyRight + "Hz" && CameraManager.Instance.IsBirdEyeViewCamActive
+         )
+        {
+
+            TiltDown();
+            OnMoving?.Invoke();
+        }
+
+        if (Input.GetKey(KeyCode.A)
+         || EEGReceiver.Instance.Data == frequencyLeft + "Hz" && !CameraManager.Instance.IsBirdEyeViewCamActive
+         )
+        {
+
+            TurnLeft();
+            OnMoving?.Invoke();
+        }
+
+        if (Input.GetKey(KeyCode.D)
+          || EEGReceiver.Instance.Data == frequencyRight + "Hz" && !CameraManager.Instance.IsBirdEyeViewCamActive
+         )
+        {
+
+            TurnRight();
+            OnMoving?.Invoke();
+        }
+
+
+
+
 
         // if (IsReadyToFire)
         // {
@@ -183,9 +197,11 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
         // }
 
         if (Input.GetKeyUp(KeyCode.LeftShift)
-        //  || EEGReceiver.Instance.Data == frequencyUp+"Hz"
+         || EEGReceiver.Instance.Data == frequencyUp + "Hz"
+        && _cooldown <= 0
          )
         {
+            _cooldown = cooldown;
             if (CameraManager.Instance.IsBirdEyeViewCamActive)
             {
                 CameraManager.Instance.DeactiveCamera(CameraType.BirdEyeView);
@@ -195,9 +211,10 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
                 CameraManager.Instance.ActiveCamera(CameraType.BirdEyeView, int.MaxValue - 1);
             }
             commandUI.ChangeUIOnView();
+
         }
 
-
+        _cooldown -= Time.deltaTime;
     }
 
 
@@ -307,14 +324,14 @@ public class CanonController : SerializedSingleton<CanonController>, IDamageable
     void TurnLeft()
     {
         currentTurn -= Time.deltaTime * turnSpeed;
-        // currentTurn = Mathf.Clamp(currentTurn, minTurn, maxTurn);
+        currentTurn = Mathf.Clamp(currentTurn, minTurn, maxTurn);
         canonRotaterTransform.localRotation = Quaternion.Euler(0, currentTurn, 0);
     }
 
     void TurnRight()
     {
         currentTurn += Time.deltaTime * turnSpeed;
-        // currentTurn = Mathf.Clamp(currentTurn, minTurn, maxTurn);
+        currentTurn = Mathf.Clamp(currentTurn, minTurn, maxTurn);
         canonRotaterTransform.localRotation = Quaternion.Euler(0, currentTurn, 0);
     }
 

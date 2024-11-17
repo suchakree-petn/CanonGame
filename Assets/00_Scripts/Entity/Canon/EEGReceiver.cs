@@ -11,8 +11,16 @@ public class EEGReceiver : Singleton<EEGReceiver>
     UdpClient client;
     public int port = 3000;
     private bool startRecieving = true;
-    private string data;
-    public string Data => data;
+    private string data = "";
+    public string Data
+    {
+        get
+        {
+            // data = "Non";
+            // Debug.Log("Data: "+_data);
+            return data;
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
